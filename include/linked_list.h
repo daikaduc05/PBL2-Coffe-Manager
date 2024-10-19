@@ -2,6 +2,7 @@
 #define LINKEDLIST_H
 
 #include <iostream>
+#include <string>
 
 template <typename T>
 class LinkedList {
