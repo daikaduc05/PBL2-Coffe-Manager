@@ -10,14 +10,13 @@ protected:
 public:
     Customer(string phone = "000000000",string name = "null",int LoyaltyPoints = 0);
     ~Customer();
-    Customer(const Person&Person, int LoyaltyPoints = 0);
     void set_loyalty_points(int loyaltyPoints);
     void get_loyalty_points() const;
 };  
 
-Customer::Customer(string phone,string name ,int LoyaltyPoints ):Person(phone,name){}
-
-Customer::Customer(const Person&Person, int LoyaltyPoints):Person(Person), cd {}
+Customer::Customer(string phone,string name ,int LoyaltyPoints ):Person(phone,name){
+    this->LoyaltyPoints=LoyaltyPoints;
+}
 
 Customer::~Customer()
 {
