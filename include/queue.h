@@ -23,8 +23,6 @@ public:
     ~Queue() {
         clear();
     }
-
-    
     void enqueue(const T& value) { // day vao
         Node* newNode = new Node{value, nullptr};
         if (!rear) {  

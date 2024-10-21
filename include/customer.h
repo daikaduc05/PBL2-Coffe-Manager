@@ -17,7 +17,7 @@ public:
 
 Customer::Customer(string phone,string name ,int LoyaltyPoints ):Person(phone,name){}
 
-Customer::Customer(const Person&Person, int LoyaltyPoints):Person(Person), cd {}
+Customer::Customer(const Person&Person, int LoyaltyPoints):Person(Person) {}
 
 Customer::~Customer()
 {
