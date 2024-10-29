@@ -14,15 +14,15 @@ public:
     void get_loyalty_points() const;
 };  
 
-<<<<<<< HEAD
+
 Customer::Customer(string phone,string name ,int LoyaltyPoints ):Person(phone,name){}
 
-Customer::Customer(const Person&Person, int LoyaltyPoints):Person(Person) {}
-=======
+
+
 Customer::Customer(string phone,string name ,int LoyaltyPoints ):Person(phone,name){
     this->LoyaltyPoints=LoyaltyPoints;
 }
->>>>>>> 5723c9b63713e3f750d9bb3718dbcbc0b4c0a1b6
+
 
 Customer::~Customer()
 {
