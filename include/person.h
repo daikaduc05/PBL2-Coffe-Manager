@@ -1,38 +1,54 @@
 #ifndef PERSON_H
 #define PERSON_H
+
 #include <iostream>
 #include <string>
 using namespace std;
-class Person{
+
+class Person {
 protected:
-    /* data */
     string phone;
     string name;
+
 public:
-    Person(string phone = "000000000",string name = "null");
+    Person(string phone = "000000000", string name = "null");
     ~Person();
-    void set_phone(string new_phone);
-    void set_name(string new_name);
-    void display_name();
-    void display_phone();
+
+    void display_name() const;   
+    void display_phone() const;  
+
+    string get_name() const;     // Lấy tên
+    string get_phone() const;    // Lấy số điện thoại
+    void set_name(const string& new_name);  // Đặt lại tên
+    void set_phone(const string& new_phone); // Đặt lại số điện thoại
 };
 
-Person::Person(string phone,string name){
-    this -> phone = phone;
-    this -> name = name;   
+Person::Person(string phone, string name) : phone(phone), name(name) {}
+
+Person::~Person() {}
+
+void Person::display_name() const {
+    cout << "Name: " << name << endl;
 }
-Person::~Person(){
+
+void Person::display_phone() const {
+    cout << "Phone: " << phone << endl;
 }
-void Person::set_name(string new_name){
-    this -> name = new_name;
+
+string Person::get_name() const {
+    return name;
 }
-void Person::set_phone(string new_phone){
-    this -> phone = new_phone;
+
+string Person::get_phone() const {
+    return phone;
 }
-void Person::display_name(){
-    cout << "Ten Khach Hang : " << this->name << '\n';
+
+void Person::set_name(const string& new_name) {
+    name = new_name;
 }
-void Person::display_phone(){
-    cout << "So Dien Thoai Khach Hang : " << this->phone << '\n';
+
+void Person::set_phone(const string& new_phone) {
+    phone = new_phone;
 }
-#endif 
+
+#endif

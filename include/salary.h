@@ -1,44 +1,40 @@
-#ifndef SALARY_H
-#define SALARY_H
+#ifndef PAYROLL_H
+#define PAYROLL_H
 
-#include <string>
-#include <iostream>
 #include "employee.h"
+#include <iostream>
 
-class Salary {
+using namespace std;
+
+class Payroll {
 private:
-    Employee TheEmployee; // Attribute to store the employee object
-    int Month;            // Attribute to store the month
-    double TotalSalary;   // Attribute to store the total salary
+    Employee employee;
+    int month;
 
 public:
-    // Default Constructor
-    Salary() : Month(0), TotalSalary(0.0) {
-        // Initialize TheEmployee with default values if needed
+    Payroll(const Employee& emp, int month = 1) : employee(emp) {
+        set_month(month);
     }
 
-    // Parameterized Constructor
-    Salary(const Employee& employee, int month, double totalSalary) 
-        : TheEmployee(employee), Month(month), TotalSalary(totalSalary) {
+    void set_month(int m) {
+        if (m >= 1 && m <= 12) {
+            month = m;
+        } else {
+            cout << "Invalid month. Setting default month to 1.\n";
+            month = 1;
+        }
     }
 
-    // Setters
-    void SetTotalSalary() {
-        TotalSalary = TheEmployee.Salary_count();
+    double calculate_salary() const {
+       
     }
 
-    void SetMonth(int month) {
-        Month = month;
-    }
-
-    // Display methods
-    void DisplayMonth() const {
-        std::cout << "Month: " << Month << std::endl;
-    }
-
-    void DisplayTotalSalary() const {
-        std::cout << "Total Salary: " << TotalSalary << std::endl;
+    void display_payroll() const {
+        cout << "Payroll for Employee: " << endl;
+        employee.display_info();
+        cout << "Month: " << month << endl;
+        cout << "Calculated Salary: " << calculate_salary() << " VND" << endl;
     }
 };
 
-#endif // SALARY_H
+#endif

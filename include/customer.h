@@ -1,50 +1,36 @@
-#ifndef CUSTOMER_H  
-#define CUSTOMER_H  
-#include<person.h>
-#include<iostream>
-#include<string>
-class Customer: public Person
-{
+#ifndef CUSTOMER_H
+#define CUSTOMER_H
+
+#include "person.h"
+#include <iostream>
+#include <string>
+using namespace std;
+class Customer : public Person {
 protected:
-    int LoyaltyPoints; // diem_tich_luy_cua_khach_hang
+    int loyalty_points;      
+    double discount_amount;  
+
 public:
-    Customer(string phone = "000000000",string name = "null",int LoyaltyPoints = 0);
-    ~Customer();
-    void set_loyalty_points(int loyaltyPoints);
-    void get_loyalty_points() const;
-};  
+    Customer(string phone = "000000000", string name = "null", int loyalty_points = 0)
+        : Person(phone, name), loyalty_points(loyalty_points), discount_amount(0.0) {}
 
+    ~Customer() {}
 
-Customer::Customer(string phone,string name ,int LoyaltyPoints ):Person(phone,name){}
-
-
-
-Customer::Customer(string phone,string name ,int LoyaltyPoints ):Person(phone,name){
-    this->LoyaltyPoints=LoyaltyPoints;
-}
-
-
-Customer::~Customer()
-{
-}
-
-void Customer::set_loyalty_points(int loyaltyPoints){
-    if(this->phone!="000000000"){
-        this->LoyaltyPoints+=LoyaltyPoints;
+    void add_loyalty_points(int points) {
+        loyalty_points += points;
     }
-    else{
-        cout<<"this customer with the number: "<<phone<<" do not exist\n";
-    }
-}
 
-void Customer::get_loyalty_points() const{
-    if(this->phone!="000000000"){
-        cout<<"The loyalty point with the number: "<<this->phone<<" is: "<<this->LoyaltyPoints<<endl;
+    double calculate_discount() {
+        discount_amount = loyalty_points * 0.1; 
+        return discount_amount;
     }
-    else{
-        cout<<"this customer with the number: "<<this->phone<<" do not exist\n";
-    }
-}
 
+    void display_info() const {
+        display_name();
+        display_phone();
+        cout << "Loyalty Points: " << loyalty_points << endl;
+        cout << "Discount Amount: " << discount_amount << endl;
+    }
+};
 
 #endif

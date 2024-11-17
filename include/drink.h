@@ -1,34 +1,32 @@
-#ifndef DRINK_H  
-#define DRINK_H  
-#include<iostream>
-#include<string>
+#ifndef DRINK_H
+#define DRINK_H
+
+#include <iostream>
+#include <string>
+
 using namespace std;
-class Drink
-{
+
+class Drink {
 private:
-    /* data */
-    string name_of_drink;
-    double drink_cost;
+    string name;
+    double price;
+
 public:
-    Drink(string name_of_drink = "null",double drink_cost = 0);
-    ~Drink();
-    void show_name_of_drink(){
-        cout << "Name of drink : " << name_of_drink << endl;
+    Drink(string name = "Unknown", double price = 0.0)
+        : name(name), price(price) {}
+
+    void set_price(double new_price) {
+        if (new_price >= 0) {
+            price = new_price;
+        } else {
+            cout << "Invalid price. Price must be non-negative.\n";
+        }
     }
-    void show_drink_cost(){
-        cout << "Cost of drink: " << drink_cost << endl;
+
+    void display_info() const {
+        cout << "Drink Name: " << name << endl;
+        cout << "Price: " << price << " VND" << endl;
     }
 };
-
-Drink::Drink(string name_of_drink = "null",double drink_cost = 0)
-{
-    this->name_of_drink = name_of_drink;
-    this->drink_cost = drink_cost;
-}
-
-Drink::~Drink()
-{
-}
-
 
 #endif

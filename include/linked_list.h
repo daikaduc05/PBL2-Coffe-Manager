@@ -31,7 +31,6 @@ public:
         size++;
     }
 
-   
     void addBack(const T& value) {
         Node* newNode = new Node{value, nullptr};
         if (!head) {
@@ -67,9 +66,22 @@ public:
         }
     }
 
-    bool isEmpty(){
-        return (head);
+    bool isEmpty() const {
+        return head == nullptr; 
     }
+
+    Node* getHead() const {
+        return head;    
+    }
+
+    void setHead(Node* newHead) {
+        head = newHead;
+    }
+
+    void decrementSize() {
+        size--;
+    }
+
 };
 
 #endif 
