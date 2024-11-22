@@ -5,15 +5,22 @@
 #include "../include/employee.h"
 #include "../include/drink.h"
 #include "../include/customer_manager.h"
-int main(){
+#include "../include/validate.h"
+#include "../include/shift.h"
+
+int main()
+{   
+    shiftList shift_list;
+    Drink drink1("Coca", 10);
     Menu menu;
-    menu.add_drink_to_menu(Drink("Coca", 10000));
-    menu.add_drink_to_menu(Drink("Pepsi", 12000));
-    menu.add_drink_to_menu(Drink("Fanta", 15000));
-    menu.display_all_drinks();
-    Bill bill("01/01/2000", "000000000", "000000000", 0);
-    bill.add_drink(menu.get_drink_by_name("Coca"), 2);
-    bill.add_drink(menu.get_drink_by_name("Pepsi"), 3);
-    bill.calculating_bill();
-    bill.show_bill();
+    menu.add_drink_to_menu(drink1);
+    Shift shift("01/01/2021", "Morning");
+    Employee emp("1234567890", "John", 10, 10);
+    shift.AddEmployee(emp);
+    Bill bill("01/01/2021", "1234567890", "0987654321");
+    bill.add_drink(drink1, 2);
+    shift.addBill(bill);
+    shift.addDrink(drink1, 2);
+    shift_list.addShift(shift);
+    shift_list.displayShiftByDateandTime("01/01/2021", "Morning");
 }
