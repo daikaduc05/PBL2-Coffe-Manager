@@ -1,1 +1,0 @@
-shift_list.addShift(shift);

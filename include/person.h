@@ -3,27 +3,38 @@
 
 #include <iostream>
 #include <string>
+#include "validate.h"
 using namespace std;
 
-class Person {
+class Person: public Validate {
 protected:
     string phone;
     string name;
 
 public:
-    Person(string phone = "000000000", string name = "null");
+    Person(string phone , string name);
     ~Person();
-
     void display_name() const;   
     void display_phone() const;  
-
-    string get_name() const;     // Lấy tên
-    string get_phone() const;    // Lấy số điện thoại
-    void set_name(const string& new_name);  // Đặt lại tên
-    void set_phone(const string& new_phone); // Đặt lại số điện thoại
+    string get_name() const;     
+    string get_phone() const;    
+    void set_name(const string& new_name);  
+    void set_phone(const string& new_phone);
 };
 
-Person::Person(string phone, string name) : phone(phone), name(name) {}
+Person::Person(string phone="0000000000", string name="null")  {
+    this->phone = phone;
+    this->name = name;
+    if(phone=="000000000" && name=="null"){
+        cout<<"Invalid input"<<endl;
+        return;
+    }
+    if(!is_valid_phone(phone)){
+        cout<<"Invalid phone number"<<endl;
+        return;
+    }
+    
+}
 
 Person::~Person() {}
 
@@ -48,6 +59,10 @@ void Person::set_name(const string& new_name) {
 }
 
 void Person::set_phone(const string& new_phone) {
+    if(!is_valid_phone(new_phone)){
+        cout<<"Invalid phone number"<<endl;
+        exit(0);
+    }
     phone = new_phone;
 }
 
