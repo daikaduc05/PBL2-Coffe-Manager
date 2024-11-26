@@ -32,9 +32,10 @@ void display_menu_drink()
     cout << "       MENU    " << endl;
     cout << "=====================================" << endl;
     cout << "1. Add Drink" << endl;
-    cout << "2. Remove Drink" << endl;
-    cout << "3. Display All Drinks" << endl;
-    cout << "4. Exit to Main Menu" << endl;
+    cout << "2. Add Drink From Csv File" << endl;
+    cout << "3. Remove Drink" << endl;
+    cout << "4. Display All Drinks" << endl;
+    cout << "5. Exit to Main Menu" << endl;
     cout << "Enter your choice: ";
 }
 
@@ -56,11 +57,12 @@ void display_menu_employee()
     cout << "       EMPLOYEE    " << endl;
     cout << "=====================================" << endl;
     cout << "1. Add Employee" << endl;
-    cout << "2. Remove Employee" << endl;
-    cout << "3. Find Employee" << endl;
-    cout << "4. Update Employee" << endl;
-    cout << "5. Display All Employees" << endl;
-    cout << "6. Exit to Main Menu" << endl;
+    cout << "2. Add Employee From Csv File" << endl;
+    cout << "3. Remove Employee" << endl;
+    cout << "4. Find Employee" << endl;
+    cout << "5. Update Employee" << endl;
+    cout << "6. Display All Employees" << endl;
+    cout << "7. Exit to Main Menu" << endl;
     cout << "Enter your choice: ";
 }
 
@@ -138,20 +140,29 @@ int main()
                 }
                 case 2:
                 {
+                    string file_path;
+                    cout << "\nEnter file path to add: ";
+                    cin >> file_path;
+                    employee_manager.add_employee_from_csv(file_path);
+                    break;
+                    
+                }
+                case 3:
+                {
                     cout << "\nEnter employee phone to remove: ";
                     cin.ignore();
                     getline(cin, name);
                     employee_manager.remove_employee_by_phone(name);
                     break;
                 }
-                case 3:
+                case 4:
                 {
                     cout << "\nEnter employee phone to find (Enter exactly 10 digits): ";
                     cin >> phone;
                     employee_manager.find_employee_by_phone(phone);
                     break;
                 }
-                case 4:
+                case 5:
                 {
                     cout << "\nEnter employee phone to update (Enter exactly 10 digits): ";
                     cin >> phone;
@@ -165,13 +176,13 @@ int main()
                     employee_manager.update_employee(phone, name, pay_rate, work_sessions);
                     break;
                 }
-                case 5:
+                case 6:
                 {
                     cout << "\nEmployees: " << endl;
                     employee_manager.display_all_employees();
                     break;
                 }
-                case 6:
+                case 7:
                 {
                     exit_employee_menu = true;
                     break;
@@ -208,6 +219,14 @@ int main()
                 }
                 case 2:
                 {
+                    cout << "Enter file path: ";
+                    string filepath;
+                    cin >> filepath;
+                    menu.add_drink_from_csv(filepath);
+                    break;
+                }
+                case 3:
+                {
                     cout << "\nEnter drink name to remove: ";
                     cin.ignore();
                     string drink_name;
@@ -215,12 +234,12 @@ int main()
                     menu.remove_drink_by_name(drink_name);
                     break;
                 }
-                case 3:
+                case 4:
                 {
                     menu.display_all_drinks();
                     break;
                 }
-                case 4:
+                case 5:
                 {
                     exit_drink_menu = true;
                     break;
@@ -259,9 +278,15 @@ int main()
             Shift shift(date, shift_time);
             while (true)
             {
-                cout << "Enter employee phone: ";
-                cin >> employee_phone;
-                shift.AddEmployee(employee_manager.get_employee_by_phone(employee_phone));
+                
+                
+                bool check_employee_phone = false;
+                while(!check_employee_phone){
+                    cout << "Enter employee phone: ";
+                    cin >> employee_phone;
+                    check_employee_phone= shift.AddEmployee(employee_manager.get_employee_by_phone(employee_phone));
+                }
+                
                 cout << "Add more employees? (Y/N): ";
                 char choice;
                 cin >> choice;

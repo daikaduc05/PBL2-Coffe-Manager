@@ -16,8 +16,6 @@ public:
         : Person(phone, name), pay_rate(pay_rate), work_sessions(work_sessions) {}
 
     ~Employee() {}
-
-    
     void display_info() const {
         display_name();
         display_phone();
@@ -25,5 +23,6 @@ public:
         cout << "Work Sessions: " << work_sessions << endl;
     }
 };
+
 
 #endif

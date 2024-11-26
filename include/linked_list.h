@@ -11,12 +11,11 @@ private:
         T data;
         Node* next;
     };
-
     Node* head;  
     int size;   
 
 public:
-   
+         
     LinkedList() : head(nullptr), size(0) {}
 
     
@@ -24,7 +23,7 @@ public:
         clear();
     }
 
-    
+
     void addFront(const T& value) {
         Node* newNode = new Node{value, head};
         head = newNode;
@@ -80,6 +79,27 @@ public:
 
     void decrementSize() {
         size--;
+    }
+     Node* getNode(int index) const {
+        if (index < 0 || index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        Node* current = head;
+        for (int i = 0; i < index; ++i) {
+            current = current->next;
+        }
+        return current;
+    }
+
+    Node* findNode(const T& value) const {
+        Node* current = head;
+        while (current != nullptr) {
+            if (current->data == value) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr;
     }
 
 };

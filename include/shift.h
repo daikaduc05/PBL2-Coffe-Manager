@@ -5,140 +5,95 @@
 #include "employee.h"
 #include "linked_list.h"
 #include<fstream>
+#include"validate.h"
+#include"bill.h"
 using namespace std;
 
-class Shift : public Employee {
+Validate validate;
+
+class Shift{
 protected:
     string date;
     string shift_time; 
-    long long sales; 
+    double sales; 
     LinkedList<Employee> employeeList; 
-    bool isLeapYear(int year) {
-        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-    }
-
-    bool validate_date(const string& date) {
-        regex date_pattern("^\\d{2}/\\d{2}/\\d{4}$");
-        if (!regex_match(date, date_pattern)) {
-            return false;
-        }
-
-        stringstream ss(date);
-        string day_str, month_str, year_str;
-        getline(ss, day_str, '/');
-        getline(ss, month_str, '/');
-        getline(ss, year_str, '/');
-
-        int day = stoi(day_str);
-        int month = stoi(month_str);
-        int year = stoi(year_str);
-
-        if (year < 2000) {
-            return false;
-        }
-
-        if (month < 1 || month > 12) {
-            return false;
-        }
-
-        int days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        if (month == 2 && isLeapYear(year)) {
-            days_in_month[1] = 29;
-        }
-
-        if (day < 1 || day > days_in_month[month - 1]) {
-            return false;
-        }
-
-        return true;
-    }
+    LinkedList<Bill> billList;
+    LinkedList<Drink> drinkList;
+    LinkedList<int> num_drink;
 public:
-    Shift(string phone, string date, string shift_time, long long sales);
-    Shift(const string& excelFilePath, const string& date, const string& shift_time, long long sales);
+    Shift(string date, string shift_time, double sales=0);
     ~Shift();
-    void AddEmployee(const Employee& employee);
-    void DeleteEmployee(const string& phone);
+    bool AddEmployee(const Employee& employee);
+    void DeleteEmployee(const Employee& employee);
     void FindEmployee(const string& phone);
-    void setSales(int sale);
+    void addBill(const Bill& bill);
+    void removeBill(const Bill& bill);
     void Display();
+    void addDrink(const Drink& drink, int num);
+    string getShiftDate() const;
+    string getShiftTime() const;
+    bool checkEmployee(const string& phone) const;
+    Bill findBillByCustomerPhone(const string&phone);
 };
 
-Shift::Shift(string phone, string date, string shift_time, long long sales) 
-    : Employee(phone), date(date), shift_time(shift_time), sales(sales) {
-    if (!validate_date(date)) {
-        throw invalid_argument("Invalid date format. Date must be in dd/mm/yyyy format and valid.");
-    }
-
-    if (shift_time != "Morning" && shift_time != "Afternoon" && shift_time != "Evening") {
-        throw invalid_argument("Invalid shift time. Must be 'Morning', 'Afternoon', or 'Evening'.");
-    }
-}
-
-Shift::Shift(const string& csvFilePath, const string& date, const string& shift_time, long long sales)
-    : date(date), shift_time(shift_time), sales(sales) {
-    // Kiểm tra ngày hợp lệ
-    if (!validate_date(date)) {
-        throw invalid_argument("Invalid date format. Date must be in dd/mm/yyyy format and valid.");
-    }
-
-    // Kiểm tra thời gian ca làm hợp lệ
-    if (shift_time != "Morning" && shift_time != "Afternoon" && shift_time != "Evening") {
-        throw invalid_argument("Invalid shift time. Must be 'Morning', 'Afternoon', or 'Evening'.");
-    }
-
-    try {
-        ifstream file(csvFilePath);
-        if (!file.is_open()) {
-            throw runtime_error("Could not open CSV file.");
-        }
-
-        string line;
-        bool isHeader = true;
-
-        while (getline(file, line)) {
-            if (isHeader) {
-                isHeader = false;
-                continue;
-            }
-
-            stringstream ss(line);
-            string phone, name;
-            string pay_rate_str, work_sessions_str;
-            double pay_rate;
-            int work_sessions;
-
-           
-            getline(ss, phone, ',');            
-            getline(ss, name, ',');             
-            getline(ss, pay_rate_str, ',');     
-            getline(ss, work_sessions_str, ',');
-
-            
-            pay_rate = stod(pay_rate_str);
-            work_sessions = stoi(work_sessions_str);
-
-            // Tạo đối tượng Employee và thêm vào danh sách
-            Employee employee(phone, name, pay_rate, work_sessions);
-            employeeList.addBack(employee);
-        }
-
-        file.close();
-        cout << "Employees imported successfully from " << csvFilePath << ".\n";
-    } catch (const exception& e) {
-        cerr << "Error reading CSV file: " << e.what() << endl;
-    }
+Shift::Shift(string date, string shift_time, double sales) {
+    this->date = date;
+    this->shift_time = shift_time;
+    this->sales = sales;
 }
 
 Shift::~Shift() {
     employeeList.clear();
 }
 
-void Shift::AddEmployee(const Employee& employee) {
-    employeeList.addBack(employee);
-    cout << "Employee added successfully.\n";
+Bill Shift::findBillByCustomerPhone(const string&phone){
+    if (billList.isEmpty()) {
+        cout << "No bills in the list.\n";
+        return Bill("null", "null", "null");
+    }
+
+    auto* current = billList.getHead();
+    while (current) {
+        if (current->data.phoneCustomer == phone) {
+            return current->data;
+        }
+        current = current->next;
+    }
+
+    cout << "Bill with customer phone: " << phone << " not found.\n";
+    return Bill("null", "null", "null");
 }
 
-void Shift::DeleteEmployee(const string& phone) {
+bool Shift::checkEmployee(const string& phone) const {
+    if (employeeList.isEmpty()) {
+        return false;
+    }
+
+    auto* current = employeeList.getHead();
+    while (current) {
+        if (current->data.get_phone() == phone) {
+            return true;
+        }
+        current = current->next;
+    }
+
+    return false;
+}
+
+bool Shift::AddEmployee(const Employee& employee) {
+    if(employee.get_name() != "null")
+    {
+        employeeList.addBack(employee);
+        cout << "Employee added successfully.\n";
+        return 1;
+    }
+    else{
+        cout << "Employee add fail.\n";
+        return 0;
+    }
+}
+
+void Shift::DeleteEmployee(const Employee& employee) {
     if (employeeList.isEmpty()) {
         cout << "No employees in the list.\n";
         return;
@@ -148,7 +103,7 @@ void Shift::DeleteEmployee(const string& phone) {
     decltype(current) previous = nullptr;
 
     while (current) {
-        if (current->data.get_phone() == phone) {
+        if (current->data.get_phone() == employee.get_phone()) {
             if (previous) {
                 previous->next = current->next;
             } else {
@@ -157,14 +112,14 @@ void Shift::DeleteEmployee(const string& phone) {
 
             delete current;
             employeeList.decrementSize();
-            cout << "Employee with phone number: " << phone << " has been removed.\n";
+            cout << "Employee with phone number: " << employee.get_phone() <<"||"<<" Name: "<<employee.get_name()<< " has been removed.\n";
             return;
         }
         previous = current;
         current = current->next;
     }
 
-    cout << "Employee with phone number: " << phone << " not found.\n";
+    cout << "Employee with phone number: " << employee.get_phone() << " not found.\n";
 }
 
 void Shift::FindEmployee(const string& phone) {
@@ -186,19 +141,67 @@ void Shift::FindEmployee(const string& phone) {
     cout << "Employee with phone number: " << phone << " not found.\n";
 }
 
-void Shift::setSales(int sale) {
-    if (sale < 0) {
-        cout << "Invalid sale amount. Sale cannot be negative.\n";
+void Shift::addBill(const Bill& bill) {
+    billList.addBack(bill);
+    
+    this->sales += bill.bill_amount;
+    cout << "Bill added successfully.\n";
+}
+void Shift::addDrink(const Drink& drink, int num) {
+    auto* current = drinkList.getHead();
+    auto* current_num = num_drink.getHead();
+    while(current){
+        if(current->data.get_name()==drink.get_name()){
+            current_num->data+=num;
+            return;
+        }
+        current = current->next;
+        current_num = current_num->next;
+    }
+    drinkList.addBack(drink);
+    num_drink.addBack(num);
+}
+
+void Shift::removeBill(const Bill& bill) {
+    if (billList.isEmpty()) {
+        cout << "No bills in the list.\n";
         return;
     }
-    this->sales += sale;
-    cout << "Sales updated successfully.\n";
+
+    auto* current = billList.getHead();
+    decltype(current) previous = nullptr;
+
+    while (current) {
+        if (current->data.phoneCustomer == bill.phoneCustomer) {
+            if (previous) {
+                previous->next = current->next;
+            } else {
+                billList.setHead(current->next);
+            }
+
+            delete current;
+            billList.decrementSize();
+            cout << "Bill with ID: " << bill.phoneCustomer
+             << " has been removed.\n";
+             this->sales -= bill.bill_amount;
+            return;
+        }
+        previous = current;
+        current = current->next;
+    }
+}
+
+string Shift::getShiftDate() const {
+    return date;
+}
+string Shift::getShiftTime() const {
+    return shift_time;
 }
 
 void Shift::Display() {
+    cout << "=====================================\n";
     cout << "Date of shift: " << this->date << endl;
     cout << "Shift time: " << this->shift_time << endl;
-    cout << "Sales of shift: " << this->sales << endl;
     cout << "Number of employees: " << employeeList.getSize() << endl;
 
     if (employeeList.isEmpty()) {
@@ -210,9 +213,146 @@ void Shift::Display() {
 
     auto* current = employeeList.getHead();
     while (current) {
-        current->data.display_info();
+        cout<<"Name: "<<current->data.get_name()<<" ||";
+        cout<<" Phone: "<<current->data.get_phone()<<" "<<endl;
         current = current->next;
     }
+    auto* current_drink = drinkList.getHead();
+    auto* current_num = num_drink.getHead();
+    cout<<"List of drinks in this shift:\n";
+    while(current_drink){
+        cout<<"Name: "<<current_drink->data.get_name()<<" ||";
+        cout<<" Number: "<<current_num->data<<endl;
+        current_drink = current_drink->next;
+        current_num = current_num->next;
+    }
+    cout<<"Shift amount:"<<sales<<endl;
+}
+class shiftList
+{
+private:
+    /* data */
+    LinkedList<Shift> shift_list;
+public:
+    shiftList(/* args */);
+    ~shiftList();
+    void addShift(const Shift& shift);
+    void removeShift(const Shift& shift);
+    Shift findShift(const string& date, const string& shift_time);
+    bool checkShift(const string& date, const string& shift_time);
+    void displayShiftList();
+    void displayShiftByDateandTime(const string& date, const string& shift_time);
+};
+
+shiftList::shiftList(/* args */)
+{
+}
+
+shiftList::~shiftList()
+{
+}
+
+void shiftList::addShift(const Shift& shift)
+{
+    shift_list.addBack(shift);
+}
+
+void shiftList::removeShift(const Shift& shift){
+    if (shift_list.isEmpty()) {
+        cout << "No shifts in the list.\n";
+        return;
+    }
+
+    auto* current = shift_list.getHead();
+    decltype(current) previous = nullptr;
+
+    while (current) {
+        if (current->data.getShiftDate() == shift.getShiftDate() && current->data.getShiftTime() == shift.getShiftTime()) {
+            if (previous) {
+                previous->next = current->next;
+            } else {
+                shift_list.setHead(current->next);
+            }
+
+            delete current;
+            shift_list.decrementSize();
+            cout << "Shift with date: " << shift.getShiftDate() << " and shift time: "<<shift.getShiftTime()
+             << " has been removed.\n";
+            return;
+        }
+        previous = current;
+        current = current->next;
+    }
+}
+
+Shift shiftList::findShift(const string& date, const string& shift_time){
+    if (shift_list.isEmpty()) {
+        cout << "No shifts in the list.\n";
+        return Shift("null", "null");
+    }
+
+    auto* current = shift_list.getHead();
+    while (current) {
+        if (current->data.getShiftDate() == date && current->data.getShiftTime() == shift_time) {
+            return current->data;
+        }
+        current = current->next;
+    }
+
+    cout << "Shift with date: " << date << " and shift time: "<<shift_time
+     << " not found.\n";
+    return Shift("null", "null");
+}
+
+bool shiftList::checkShift(const string& date, const string& shift_time){
+    if (shift_list.isEmpty()) {
+        cout << "No shifts in the list.\n";
+        return false;
+    }
+
+    auto* current = shift_list.getHead();
+    while (current) {
+        if (current->data.getShiftDate() == date && current->data.getShiftTime() == shift_time) {
+            return true;
+        }
+        current = current->next;
+    }
+
+    cout << "Shift with date: " << date << " and shift time: "<<shift_time
+     << " not found.\n";
+    return false;
+}
+
+void shiftList::displayShiftList(){
+    if (shift_list.isEmpty()) {
+        cout << "No shifts in the list.\n";
+        return;
+    }
+
+    auto* current = shift_list.getHead();
+    while (current) {
+        current->data.Display();
+        current = current->next;
+    }
+}
+
+void shiftList::displayShiftByDateandTime(const string& date, const string& shift_time){
+    if (shift_list.isEmpty()) {
+        cout << "No shifts in the list.\n";
+        return;
+    }
+
+    auto* current = shift_list.getHead();
+    while (current) {
+        if (current->data.getShiftDate() == date && current->data.getShiftTime() == shift_time) {
+            current->data.Display();
+            return;
+        }
+        current = current->next;
+    }
+
+    cout << "Shift with date: " << date << " and shift time: "<<shift_time
+     << " not found.\n";
 }
 
 #endif
